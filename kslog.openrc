@@ -1,0 +1,34 @@
+#!/sbin/openrc-run
+# If "id syslog" fails then useradd syslog.
+#   install -cm755 kslog.openrc /etc/init.d/kslog
+#   ln -s ../../init.d/kslog /etc/runlevels/default
+
+depend() {
+	use clock
+	need hostname localmount
+	after bootmisc
+	provide logger
+}
+
+start() {
+	ebegin "Starting kslog"
+# Setting TZ here prevents many glibc stat("/etc/localtime")s.
+# EDIT MESSAGE -> FILE ROUTING TO YOUR LIKING.
+        env -i TZ=EST5EDT PATH=/usr/local/bin:$PATH \
+	    kslog-open -n`hostname` -pkernel -psshd -psu,SUs
+	eend $?
+}
+
+stop() {
+	local ret
+	ebegin "Stopping kslog"
+	start-stop-daemon --stop --pidfile /run/kslog.pid
+	ret=$?
+	rm -f /run/kslog.pid
+	eend ${ret}
+}
+
+restart() {
+	stop
+	start
+}
