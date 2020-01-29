@@ -58,7 +58,7 @@ proc cp_trunc*(src: string, dst: string, pid: Pid=0, verbose=false): int =
   if pid != 0:
     discard kill(pid, SIGCONT)              #Resume writer, now appending from 0
     if verbose:
-      let dt = $((epochTime() - t0) * 1e3) & " millisec"
+      let dt = $(int((epochTime() - t0) * 1e6 + 0.5)) & " microseconds"
       echo "truncated \"" & src & "\"; resumed " & $pid & " after " & dt
 
 when isMainModule:
