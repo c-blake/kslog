@@ -1,4 +1,4 @@
-import os, posix, times, strutils
+import os, posix, times, strutils, cligen
 var buffer = newStringOfCap(16000)
 var st: Stat
 let buf = buffer[0].addr.pointer
@@ -85,10 +85,8 @@ proc cp_trunc*(src: string, dst: string, pid: Pid=0, verbose=false): int =
       let dt = $(int((epochTime() - t0) * 1e6 + 0.5)) & " microseconds"
       echo "truncated \"" & src & "\"; resumed " & $pid & " after " & dt
 
-when isMainModule:
-  import cligen
-  dispatch(cp_trunc, cmdName="cp-trunc",
-           help={"src"    : "source path to copy & truncate",
-                 "dst"    : "destination path of copy",
-                 "pid"    : "pid to pause during tail copy (0=>no pause)",
-                 "verbose": "print activity" })
+dispatch(cp_trunc, cmdName="cp-trunc",
+         help = { "src"    : "source path to copy & truncate",
+                  "dst"    : "destination path of copy",
+                  "pid"    : "pid to pause during tail copy (0=>no pause)",
+                  "verbose": "print activity" })
