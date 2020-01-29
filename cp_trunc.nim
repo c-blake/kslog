@@ -1,4 +1,31 @@
-import os, posix, times
+import os, posix, times, strutils
+var buffer = newStringOfCap(16000)
+var st: Stat
+let buf = buffer[0].addr.pointer
+let siz = 16000.csize
+
+proc isSuspended(pid: Pid=0, delayUsec=40): bool =
+  if pid == 0:                              #No delay and/or pid does not exist
+    return true
+  if stat("/proc/stat", st) == 0:
+    let path = "/proc/" & $pid & "/status"
+    let pfd = open(path, O_RDONLY)
+    if pfd == -1:   #Allowed to to signal or cp_trunc would already have failed
+      return true   #So, -1 here can only mean pid failed to exist => proceed
+    let nR = read(pfd, buf, siz)
+    discard close(pfd)
+    if nR <= 0:                             #Likely impossible once open works
+      return true                           #Assume PID must be dead/zombie
+    buffer.setLen nR                        #Set length of Nim string to amt rd
+    let rightParen = buffer.rfind(')')      #Status is 1-char field post (cmd)
+    if rightParen < buffer.len - 2:         #Also probably impossible
+      return true                           #Assume PID must be dead/zombie
+    result = buffer[rightParen + 1] == 'T'
+    if not result:
+      discard usleep(delayUsec.USeconds)
+  else:                                     #/proc/stat not present
+    discard usleep(2000)                    #  => Just sleep 2ms
+    return true                             #..and always return true
 
 proc cp_trunc*(src: string, dst: string, pid: Pid=0, verbose=false): int =
   ## ``cp_trunc`` copies ``src`` to ``dst`` (both paths to regular files),
@@ -20,19 +47,16 @@ proc cp_trunc*(src: string, dst: string, pid: Pid=0, verbose=false): int =
 
   if pid != 0 and kill(pid, 0) == -1 and errno == EPERM:  #signal perm check
     fail "cannot signal " & $pid, errno, 2  #(Also proceed if pid doesn't exist)
-  var buffer = newSeq[char](16000)
-  let buf = buffer[0].addr.pointer
-  let siz = 16000.csize
   let sfd = open(src, O_RDWR)               #Source read-write (since we trunc)
   if sfd == -1: fail "open(\"" & src & "\")", errno, 3
   defer: discard close(sfd)
-  var stS: Stat; discard fstat(sfd, stS)
-  if not S_ISREG(stS.st_mode): fail src & " is not a regular file", 0, 4
+  discard fstat(sfd, st)
+  if not S_ISREG(st.st_mode): fail src & " is not a regular file", 0, 4
   let dfd = open(dst, O_CREAT or O_TRUNC or O_WRONLY, 0o666) #Make Destination
   if dfd == -1: fail "open(\"" & dst & "\")", errno, 5
   defer: discard close(dfd)
-  var stD: Stat; discard fstat(dfd, stD)
-  if not S_ISREG(stD.st_mode): fail dst & " is not a regular file", 0, 6
+  discard fstat(dfd, st)
+  if not S_ISREG(st.st_mode): fail dst & " is not a regular file", 0, 6
   if verbose: echo "copying " & src & " -> " & dst
   while true:                               #Copy bytes until we run out
     let nR = read(sfd, buf, siz)
@@ -45,8 +69,8 @@ proc cp_trunc*(src: string, dst: string, pid: Pid=0, verbose=false): int =
     if verbose:
       echo "pausing " & $pid
       t0 = epochTime()
-    discard kill(pid, SIGSTOP)              #Pause writer (or barrel onward
-                                            #..since writer is now gone).
+    discard kill(pid, SIGSTOP)   #Pause writer|proceed since writer must be gone
+    while not isSuspended(pid): discard     #Wait for de-scheduling of pid
     while true:                             #Now copy any NEW data
       let nR = read(sfd, buf, siz)          #This loop will almost always be
       if nR > 0:                            #..just 1 read & 1 write, but we
