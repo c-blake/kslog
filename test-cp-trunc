@@ -1,0 +1,44 @@
+#!/bin/bash
+#The below echos runs at about 300,000 fake log entry/second on my computer.
+#That's a fast & furious logging rate and with it I was actually able to catch
+#a (now fixed?) race between process suspension and the subsequent read call.
+#Number of echos may need tuning to take longer than the zero-size-check sleep.
+
+cd /tmp                                               #Or wherever..
+
+x="1234567890123456789012345678901234567890"          #adjustable data rate
+
+rm -f ref
+
+(for i in {1..1000000}; do echo $i $x; done) >ref     #Make ref data
+
+it=0                                  #I cannot get this to fail on my machine.
+while [ $it -lt 1000 ]; do            #Maybe you will have "better luck".
+
+rm -f late
+(for i in {1..1000000}; do echo $i $x; done) >>late & #Make append-only logger
+pid=$!                                                #Remember PID of sub-shell
+
+while ! [ -s late ]; do                               #Wait for size to be > 0
+    sleep 1
+done
+cp-trunc -s late -d early -p $pid -v                  #Launch log-rotator
+
+wait                                                  #Wait for writer to finish
+
+cat early late > paused                               #Re-combine two parts
+
+if cmp ref paused                                     #Compare expected w/actual
+then
+    echo "Test $it succeeded; re-combined logs matched expected."
+    rm -f late early paused
+else
+    echo "Test $it failed; re-combined logs do not match expected."
+    echo "Only $(wc -l < paused) lines not $(wc -l < ref)"
+    diff ref paused
+    echo "Files left in $(pwd) for manual inspection."
+    exit 1
+fi
+
+it=$((it+1))
+done
