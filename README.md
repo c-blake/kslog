@@ -10,10 +10,10 @@ Instead of all that jazz, I give you `kslog` - under 200 lines of Nim that
 likely does all you really need in two easy pieces - a few dozen line easily
 audited privileged `kslog_open.nim` and 125-ish line `kslog.nim`.
 
-Sadly, `kslog_open` (*not* `kslog`) must run as root to manipulate `/dev/`.
+Sadly, `kslog-open` (*not* `kslog`) must run as root to manipulate `/dev/`.
 At this late date, there is probably no relocating of `/dev/log` or making
 binding of Unix domain sockets easier.  This opening phase is *all* `kslog`
-needs elevated privilege for.  `kslog_open` just does this minimal work to
+needs elevated privilege for.  `kslog-open` just does this minimal work to
 set up input file descriptors 0,3 and then drops privilege & exec's `kslog`.
 `kslog` itself only needs permission to open its output files for write.
 If said output files already exist with `syslog`-user writable permission,
@@ -26,8 +26,8 @@ is a better way to decide if you want to filter out informational or debug
 messages by altering `maxLevel` than looking at a big list of examples.
 `grep '\<P[67],F[0-9]' /var/log/msgs` does just that.  Personally, I keep
 all priority levels, but retention also makes it easy to grep for important
-things, too.  I think dropping these fields harkens to disk space concerns
-long since past.
+things, too.  I think dropping these fields (and calendar years!) harkens
+to disk space concerns long since past.
 
 Personally, I only do this every several years or so, but if disk space in
 `/var/log/` is at a premium (a bad idea, but sometimes things happen), you
