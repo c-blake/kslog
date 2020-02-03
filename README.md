@@ -50,5 +50,5 @@ than syslog (e.g. `wtmp`).  Detecting even transient revocation of such
 access by an intruder is also easy.  This idea does not solve the problem
 of literally zero local space for logs.  That problem is perhaps best
 addressed by an independent specialized tool, like a hypothetical `logfwd`
-(that should also support non-syslog logs!).  In short, this whole area is
-about file replication and management, not system logging directly.
+(that should also support non-syslog logs!).  In short, this whole topic
+is about file replication and management, not system logging directly.
