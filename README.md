@@ -17,9 +17,9 @@ needs elevated privilege for.  `kslog-open` just does this minimal work to
 set up input file descriptors 0,3 and then drops privilege & exec's `kslog`.
 `kslog` itself only needs permission to open its output files for write.
 If said output files already exist with `syslog`-user writable permission,
-the `syslog` user need not even be able to create new files in `/var/log`.
-Wide ability to write to `/dev/log` always affords an easy fill-the-disk
-attack, of course.
+the `syslog` user need not even have permission to create new files in
+`/var/log`.  Wide ability to write to `/dev/log` always affords an easy
+fill-the-disk attack, of course.
 
 Priority & facility numbers are retained in `kslog` logs.  I doubt there
 is a better way to decide if you want to filter out informational or debug
