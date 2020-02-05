@@ -1,3 +1,5 @@
+Privilege and Complexity
+========================
 I mostly wrote this because I wanted to run my kernel/system logger not as
 root.  I looked into doing this with `syslog-ng` and it seemed hard to get
 right.  `CAP_SYS_ADMIN` or whatnot also seem used.  I had a hunch that over
@@ -21,6 +23,8 @@ the `syslog` user need not even have permission to create new files in
 `/var/log`.  Wide ability to write to `/dev/log` always affords an easy
 fill-the-disk attack, of course.
 
+Log Contents
+=============
 Priority & facility numbers are retained in `kslog` logs.  I doubt there
 is a better way to decide if you want to filter out informational or debug
 messages by altering `maxLevel` than looking at a big list of examples.
@@ -29,6 +33,8 @@ all priority levels, but retention also makes it easy to grep for important
 things, too.  I think dropping these fields (and calendar years!) harkens
 to disk space concerns long since past.
 
+Log Rotation
+============
 Personally, I only do this every several years or so, but if disk space in
 `/var/log/` is at a premium (a bad idea, but sometimes things happen), you
 can still rotate logs.  Since `kslog` never re-opens output files, showing
@@ -40,6 +46,8 @@ To avoid losing msgs from filled backlogs, care should be taken to not leave
 has to suspend kslog for "around milliseconds".  Considering times are only
 1-second resolution, it is doubtful that delay would ever matter.
 
+Remote Logs
+===========
 When you want remote logs on some more trusted machine then I recommend
 providing remote `rsync` access to local logs made by `kslog`.  Provided
 this access is one-way (trusted can access `kslogs` but not vice versa),
@@ -47,8 +55,6 @@ I'd think this adequate protection/detection from intruders altering logs.
 It is much lower tech just using ssh/rsync/etc. which you likely already
 know how to use and additionally supports logs updated by entities other
 than syslog (e.g. `wtmp`).  Detecting even transient revocation of such
-access by an intruder is also easy.  This idea does not solve the problem
-of literally zero local space for logs.  That problem is perhaps best
-addressed by an independent specialized tool, like a hypothetical `logfwd`
-(that should also support non-syslog logs!).  In short, this whole topic
-is about file replication and management, not system logging directly.
+remote access by a local intruder is also easy.  This idea does not solve
+the problem of literally zero local space for logs, though a network FS
+may (while still copying from less to more trusted domains).
