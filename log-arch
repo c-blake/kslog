@@ -13,9 +13,9 @@ This is a simple log file archiver for kslog.  Noteworthy requirements are:
 EOF
     exit 1
 fi
-: "${dst:='.'}"
-: "${src:='/var/log'}"
-: "${zip:='pzstd -f -p8 --rm -19'}" #Or gzip,xz..; pzstd DEcompresses FAST
+: "${dst:=.}"
+: "${src:=/var/log}"
+: "${zip:=pzstd -f -p8 --rm -19}" #Or gzip,xz..; pzstd DEcompresses FAST
 if ! type cp-trunc; then echo "No \"cp-trunc\" in PATH"; exit 1; fi
 
 : "${pid:=$(cat /run/kslog.pid)}" #If service is not running pid=""
