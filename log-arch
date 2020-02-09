@@ -13,24 +13,24 @@ This is a simple log file archiver for kslog.  Noteworthy requirements are:
 EOF
     exit 1
 fi
-: ${dst:="."}
-: ${src:="/var/log"}
-: ${zip:="pzstd -f -p8 --rm -19"}   #Or gzip,xz..; pzstd DEcompresses FAST
+: "${dst:='.'}"
+: "${src:='/var/log'}"
+: "${zip:='pzstd -f -p8 --rm -19'}" #Or gzip,xz..; pzstd DEcompresses FAST
 if ! type cp-trunc; then echo "No \"cp-trunc\" in PATH"; exit 1; fi
 
-: ${pid:=`cat /run/kslog.pid`}  #If service is not running pid=""
+: "${pid:=$(cat /run/kslog.pid)}" #If service is not running pid=""
 
 [ -z "$pid" ] && pid=0
 
 set -e                          #Exit anon on any err; cannot cp, etc.
 for log in "$@"; do
-    [ -e $src/$log ] || continue
+    [ -e "$src/$log" ] || continue
     i=0                         #find an unused numerical index suffix slot
-    while [ -e $dst/$log.$i -o -e $dst/$log.$i.* ]; do
+    while [ -e "$dst/$log.$i" -o -e "$dst/$log.$i".* ]; do
         i=$((i+1))              #Either uncompressed & compressed can alloc slot
     done
     i=$(printf "%02d" $i)       #2 digits with zero pad shell-glob sorts nicely
     cp-trunc -vp$pid -s "$src/$log" -d "$dst/$log.$i"   #truncating-copy to $dst
     echo "Running \"$zip $dst/$log.$i\".  Could take a while"
-    $zip $dst/$log.$i           #Compress can take however long.
+    "$zip" "$dst/$log.$i"       #Compress can take however long.
 done
