@@ -58,3 +58,10 @@ than syslog (e.g. `wtmp`).  Detecting even transient revocation of such
 remote access by a local intruder is also easy.  This idea does not solve
 the problem of literally zero local space for logs, though a network FS
 may (while still copying from less to more trusted domains).
+
+Efficiency
+==========
+Compiled Nim programs are efficient.  I routinely see CPU usage in the range
+50..400 parts per ***billion*** with an RSS under 2 MiB.  This obviously varies
+based on how much your system logs.  In any event, while I have not measured it
+I strongly suspect this program uses much less space/time than, say, syslog-ng.
