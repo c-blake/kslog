@@ -2,14 +2,14 @@ import os, posix, times, strutils, cligen
 var buffer = newStringOfCap(16000)
 var st: Stat
 let buf = buffer[0].addr.pointer
-let siz = 16000.csize
+let siz = 16000
 
 proc isSuspended(pid: Pid=0, delayUsec=40): bool =
   if pid == 0:                              #No delay and/or pid does not exist
     return true
   if stat("/proc/stat", st) == 0:
     let path = "/proc/" & $pid & "/status"
-    let pfd = open(path, O_RDONLY)
+    let pfd = open(path.cstring, O_RDONLY)
     if pfd == -1:   #Allowed to to signal or cp_trunc would already have failed
       return true   #So, -1 here can only mean pid failed to exist => proceed
     let nR = read(pfd, buf, siz)

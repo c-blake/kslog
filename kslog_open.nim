@@ -37,9 +37,9 @@ kslog itself cannot remove /run/kslog.pid (but process table checks work).
     quit(3)
 
   let pidFile = "/run/kslog.pid"                #Is this ever named anything
-  discard unlink(pidFile)                       #..else?  Could parameterize,
+  discard unlink(pidFile.cstring)               #..else?  Could parameterize,
   writeNumberToFile(pidFile, getpid().int)      #..but not great to let root
-  discard chmod(pidFile, 0o644)                 #..clobber user-spec files. ;)
+  discard chmod(pidFile.cstring, 0o644)         #..clobber user-spec files. ;)
 
   if not dropPrivilegeTo("syslog", "syslog"):   #Drop privileges->syslog.syslog
     stderr.write "cannot drop privileges. Not root? No syslog user/group?\n"
@@ -47,7 +47,7 @@ kslog itself cannot remove /run/kslog.pid (but process table checks work).
 
   let arg0 = "kslog"                            #Run the main parser-log-writer
   let argv = allocCStringArray(@[ arg0 ] & params)
-  discard execvp(arg0, argv)
+  discard execvp(arg0.cstring, argv)
   stderr.write "cannot exec kslog\n"
   quit(5)
 
