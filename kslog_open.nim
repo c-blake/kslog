@@ -24,7 +24,7 @@ kslog itself cannot remove /run/kslog.pid (but process table checks work).
   let pathVal = "/dev/log"                      #+ 1 below copies \0
   copyMem uds.sun_path[0].addr, pathVal[0].unsafeAddr, pathVal.len + 1
   discard unlink(uds.sun_path[0].addr.cstring)  #liberate path name
-  if bindSocket(dfd, cast[ptr Sockaddr](uds.addr), uds.sizeof.SockLen) < 0:
+  if bindSocket(dfd, cast[ptr SockAddr](uds.addr), uds.sizeof.SockLen) < 0:
     stderr.write "cannot bind socket to /dev/log\n"
     quit(2)
 

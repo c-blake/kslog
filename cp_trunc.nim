@@ -22,7 +22,7 @@ proc isSuspended(pid: Pid=0, delayUsec=40): bool =
       return true                           #Assume PID must be dead/zombie
     result = buffer[rightParen + 1] == 'T'
     if not result:
-      discard usleep(delayUsec.USeconds)
+      discard usleep(delayUsec.Useconds)
   else:                                     #/proc/stat not present
     discard usleep(2000)                    #  => Just sleep 2ms
     return true                             #..and always return true
