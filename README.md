@@ -25,13 +25,13 @@ fill-the-disk attack, of course.
 
 Log Contents
 =============
-Priority & facility numbers are retained in `kslog` logs.  I doubt there
-is a better way to decide if you want to filter out informational or debug
-messages by altering `maxLevel` than looking at a big list of examples.
-`grep '\<P[67],F[0-9]' /var/log/msgs` does just that.  Personally, I keep
-all priority levels, but retention also makes it easy to grep for important
-things, too.  I think dropping these fields (and calendar years!) harkens
-to disk space concerns long since past.
+Priority & facility numbers are retained in `kslog` logs.  I doubt there is a
+better way to learn how to filter out informational|debug messages by altering
+`maxLevel` than looking at a big list of examples.  `grep '\<P[67],F[0-9]'
+/var/log/msgs` does just that.  Personally, I keep all priority levels, but
+PF-retention also makes it easy to grep for important things, too, while also
+keeping the convenience of just one file.  Dropping these fields (and calendar
+years!) harkens to disk space concerns long since past.
 
 Log Rotation
 ============
