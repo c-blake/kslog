@@ -18,7 +18,7 @@ proc parsePrefix(prefix: seq[string]) =
     if cols.len > 2: continue
     let path = if cols.len == 2: cols[1] else: cols[0]
     try: files[cols[0]] = open(path, fmAppend, bufSize=0)
-    except: stderr.write "could not open ", path; discard
+    except: stderr.write "could not open ", path, "\n"; discard
 
 let splitChars = { ' ', ':', '[', '/', '\t' }   #add cmd line option?
 proc getFile(msg: string): File {.inline.} =    #Route a `msg` to its `File`
