@@ -9,10 +9,10 @@ const LOG_INFO    = 6                   #informational prio
 const LOG_USER    = 1 shl 3             #default facility: user-level msgs
 const LOG_SYSLOG  = 5 shl 3             #syslog facility: internal msgs
 var host    = ""                        #local host name
-var keepMax = 8
-var files: Table[string, File]
+var keepMax = 8                         #keep priorities > this-1
+var files: Table[string, File]          #map from demon name -> open `File`
 
-proc parsePrefix(prefix: seq[string]) =
+proc parsePrefix(prefix: seq[string]) = #parse CLI `prefix` into open `files`
   for pfxPath in prefix:
     let cols = pfxPath.split(',')
     if cols.len > 2: continue
