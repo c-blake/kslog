@@ -1,4 +1,5 @@
 import posix, times, strUtils, parseUtils, tables, cligen
+when not declared(stderr): import std/syncio
 
 const LOG_PRIMASK = 0x07                #mask to extract priority
 const LOG_FACMASK = 0x03f8              #mask to extract facility (w/shr)

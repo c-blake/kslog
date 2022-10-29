@@ -1,4 +1,5 @@
 import os, posix, times, strutils, cligen
+when not declared(stderr): import std/syncio
 var buffer = newStringOfCap(16000)
 var st: Stat
 let buf = buffer[0].addr.pointer

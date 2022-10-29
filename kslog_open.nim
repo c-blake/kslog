@@ -1,4 +1,5 @@
 import os, posix, cligen/osUt, cligen/posixUt
+when not declared(stdout): import std/syncio
 
 proc main() =
   let params = commandLineParams()
