@@ -19,13 +19,13 @@ proc parsePrefix(prefix: seq[string]) = #parse CLI `prefix` into open `files`
     if cols.len > 2: continue
     let path = if cols.len == 2: cols[1] else: cols[0]
     try: files[cols[0]] = open(path, fmAppend, bufSize=0)
-    except: stderr.write "could not open ", path, "\n"; discard
+    except CatchableError: stderr.write "could not open ", path, "\n"; discard
 
 let splitChars = { ' ', ':', '[', '/', '\t' }   #add cmd line option?
 proc getFile(msg: string): File {.inline.} =    #Route a `msg` to its `File`
   for pfx in msg.split(splitChars):             #A loop, but only want field 0
     if pfx != "":                               #Sometimes can be >1 spaces
-      return (try: files[pfx] except: files.getOrDefault("", stderr))
+      return(try:files[pfx] except CatchableError:files.getOrDefault("",stderr))
 
 let tmFmt = "MMM dd YYYY HH:mm:ss"
 var year5 = getTime().format(" YYYY")           #Include year in all timestamps
