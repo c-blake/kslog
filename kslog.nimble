@@ -1,5 +1,5 @@
 # Package
-version     = "0.6"
+version     = "0.7"
 author      = "Charles Blake"
 description = "Minimalistic Kernel-Syslogd For Linux in Nim"
 license     = "MIT/ISC"
