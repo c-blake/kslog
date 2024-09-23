@@ -1,4 +1,4 @@
-import posix, times, strUtils, parseUtils, tables, cligen
+import std/[posix, times, strutils, parseutils, tables], cligen
 when not declared(stderr): import std/syncio
 
 const LOG_PRIMASK = 0x07                #mask to extract priority
