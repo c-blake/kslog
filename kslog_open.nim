@@ -1,4 +1,4 @@
-import os, posix, cligen/osUt, cligen/posixUt
+import std/[os, posix], cligen/[osUt, posixUt]
 when not declared(stdout): import std/syncio
 
 proc main() =

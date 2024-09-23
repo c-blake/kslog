@@ -1,4 +1,4 @@
-import os, posix, times, strutils, cligen
+import std/[os, posix, times, strutils], cligen
 when not declared(stderr): import std/syncio
 var buffer = newStringOfCap(16000)
 var st: Stat
