@@ -126,7 +126,8 @@ proc kslog(name="localhost",prefix= @[",msgs"],dir="/var/log",maxLevel=8): int =
     rd = rd0
   die(0)                                #should probably never happen
 
-dispatch(kslog, help={"name"    : "host name tag for every message",
-                      "maxLevel": "maximum log level to record",
-                      "dir"     : "directory to run out of",
-                      "prefix"  : ",-sep FIRST-WORD[,LOGFILE-BASENAME]"})
+include cligen/mergeCfgEnv; dispatch kslog, help={
+  "name"    : "host name tag for every message",
+  "maxLevel": "maximum log level to record",
+  "dir"     : "directory to run out of",
+  "prefix"  : ",-sep FIRST-WORD[,LOGFILE-BASENAME]"}

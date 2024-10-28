@@ -86,8 +86,8 @@ proc cp_trunc*(src: string, dst: string, pid: Pid=0, verbose=false): int =
       let dt = $(int((epochTime() - t0) * 1e6 + 0.5)) & " microseconds"
       echo "truncated \"" & src & "\"; resumed " & $pid & " after " & dt
 
-dispatch(cp_trunc, cmdName="cp-trunc",
-         help = { "src"    : "source path to copy & truncate",
-                  "dst"    : "destination path of copy",
-                  "pid"    : "pid to pause during tail copy (0=>no pause)",
-                  "verbose": "print activity" })
+include cligen/mergeCfgEnv; dispatch cp_trunc, cmdName="cp-trunc", help={
+  "src"    : "source path to copy & truncate",
+  "dst"    : "destination path of copy",
+  "pid"    : "pid to pause during tail copy (0=>no pause)",
+  "verbose": "print activity" }
