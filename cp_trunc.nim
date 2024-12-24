@@ -1,10 +1,10 @@
+{.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
 import std/[os, posix, times, strutils], cligen
 when not declared(stderr): import std/syncio
 var buffer = newStringOfCap(16000)
 var st: Stat
 let buf = buffer[0].addr.pointer
 let siz = 16000
-
 proc isSuspended(pid: Pid=0, delayUsec=40): bool =
   if pid == 0:                              #No delay and/or pid does not exist
     return true
