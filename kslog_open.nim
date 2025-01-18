@@ -1,6 +1,6 @@
-{.warning[Uninit]:off, warning[ProveInit]:off.} # Should be verbosity:2 not 1
 import std/[os, posix], cligen/[osUt, posixUt]
 when not declared(stdout): import std/syncio
+
 proc main() =
   let params = commandLineParams()
   if params.len < 1:
