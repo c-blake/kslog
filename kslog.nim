@@ -40,7 +40,7 @@ proc stampLog(priFac: int; msg: string; kern=false) =
     getFile(msg).write combined
   else:                                         #msg has no time; use now..
     let t = getTime()
-    year5 = t.format(" YYYY")
+    year5 = t.format(" YYYY")                   #Update global on each kern msg
     let combined = t.format(tmFmt) & " " & host & " " & pf & " " & msg & "\n"
     getFile(msg).write combined
 
