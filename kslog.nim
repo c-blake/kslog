@@ -73,7 +73,7 @@ proc splitFmtStampLog(msg: string, kern=false) =
       if msg[i] == '\n': quoted.add ' '
       elif ord(msg[i]) < 32 and msg[i] != '\t':
         quoted.add '^'
-        quoted.add chr(ord('@') + ord(msg[i]))  #^@, ^A, ^B...
+        quoted.add char(ord('@') + ord(msg[i])) #^@, ^A, ^B...
       else:
         quoted.add msg[i]
       i.inc                                     #EOdata checked at top of loop
